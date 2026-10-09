@@ -17,9 +17,9 @@
 
     <section class="controls">
       <label for="status-filter">Status</label>
-      <select id="status-filter">
-        <option value="all">All statuses</option>
-      </select>
+      <select id="status-filter"></select>
+      <label for="priority-filter">Priority</label>
+      <select id="priority-filter"></select>
       <span id="result-count" class="result-count" aria-live="polite"></span>
     </section>
 
@@ -30,13 +30,14 @@
           <th scope="col">Title</th>
           <th scope="col">Requester</th>
           <th scope="col" class="num">Votes</th>
+          <th scope="col">Priority</th>
           <th scope="col">Status</th>
           <th scope="col">Updated</th>
         </tr>
       </thead>
       <tbody id="request-rows"></tbody>
     </table>
-    <p id="empty-state" class="empty" hidden>No feature requests match this status.</p>
+    <p id="empty-state" class="empty" hidden>No feature requests match these filters.</p>
   </main>
 
   <script src="data.js"></script>

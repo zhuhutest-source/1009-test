@@ -95,3 +95,7 @@ tbody tr:last-child td { border-bottom: none; }
 .status-in-progress { --status: #0969da; }
 .status-shipped { --status: #1a7f37; }
 .status-declined { --status: #cf222e; }
+
+.priority-high { --status: #bc4c00; }
+.priority-medium { --status: #9a6700; }
+.priority-low { --status: #6e7781; }

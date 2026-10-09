@@ -1,8 +1,10 @@
 (function () {
   const statuses = window.FEATURE_STATUSES;
+  const priorities = window.FEATURE_PRIORITIES;
   const requests = window.FEATURE_REQUESTS;
 
-  const select = document.getElementById("status-filter");
+  const statusSelect = document.getElementById("status-filter");
+  const prioritySelect = document.getElementById("priority-filter");
   const rows = document.getElementById("request-rows");
   const summary = document.getElementById("summary");
   const resultCount = document.getElementById("result-count");
@@ -10,70 +12,99 @@
 
   const slug = (s) => s.toLowerCase().replace(/\s+/g, "-");
 
-  function countByStatus() {
-    const counts = Object.fromEntries(statuses.map((s) => [s, 0]));
-    requests.forEach((r) => { counts[r.status] = (counts[r.status] || 0) + 1; });
-    return counts;
+  // Single source of truth for all filters; every change merges into this
+  // so updating one filter never resets the others.
+  const filters = { status: "all", priority: "all" };
+  const allowed = { status: statuses.map(slug), priority: priorities.map(slug) };
+
+  const matches = (r, f) =>
+    (f.status === "all" || slug(r.status) === f.status) &&
+    (f.priority === "all" || slug(r.priority) === f.priority);
+
+  // Counts for one dimension, respecting the other active filters.
+  function countBy(key, values) {
+    const others = { ...filters, [key]: "all" };
+    const pool = requests.filter((r) => matches(r, others));
+    const counts = Object.fromEntries(values.map((v) => [v, 0]));
+    pool.forEach((r) => { counts[r[key]] = (counts[r[key]] || 0) + 1; });
+    return { counts, total: pool.length };
   }
 
-  function statusFromUrl() {
-    const value = new URLSearchParams(window.location.search).get("status");
-    return value && statuses.some((s) => slug(s) === value) ? value : "all";
+  function readUrl() {
+    const params = new URLSearchParams(window.location.search);
+    Object.keys(filters).forEach((key) => {
+      const value = params.get(key);
+      filters[key] = value && allowed[key].includes(value) ? value : "all";
+    });
   }
 
-  function syncUrl(value) {
+  function syncUrl() {
     const url = new URL(window.location.href);
-    if (value === "all") url.searchParams.delete("status");
-    else url.searchParams.set("status", value);
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value === "all") url.searchParams.delete(key);
+      else url.searchParams.set(key, value);
+    });
     window.history.replaceState(null, "", url);
   }
 
-  function renderOptions(counts) {
-    statuses.forEach((s) => {
+  function renderOptions(select, key, values, allLabel) {
+    const { counts, total } = countBy(key, values);
+    const options = [["all", `${allLabel} (${total})`]].concat(
+      values.map((v) => [slug(v), `${v} (${counts[v]})`])
+    );
+    select.replaceChildren(...options.map(([value, label]) => {
       const opt = document.createElement("option");
-      opt.value = slug(s);
-      opt.textContent = `${s} (${counts[s]})`;
-      select.appendChild(opt);
-    });
-    select.options[0].textContent = `All statuses (${requests.length})`;
+      opt.value = value;
+      opt.textContent = label;
+      return opt;
+    }));
+    select.value = filters[key];
   }
 
-  function renderSummary(counts, active) {
+  function renderSummary() {
+    const { counts } = countBy("status", statuses);
     summary.replaceChildren(...statuses.map((s) => {
+      const value = slug(s);
       const btn = document.createElement("button");
       btn.type = "button";
-      btn.className = `card status-${slug(s)}`;
-      btn.setAttribute("aria-pressed", String(active === slug(s)));
+      btn.className = `card status-${value}`;
+      btn.setAttribute("aria-pressed", String(filters.status === value));
       btn.innerHTML = `<span class="count"></span><span class="label"></span>`;
       btn.querySelector(".count").textContent = counts[s];
       btn.querySelector(".label").textContent = s;
-      btn.addEventListener("click", () => applyFilter(active === slug(s) ? "all" : slug(s)));
+      btn.addEventListener("click", () =>
+        setFilters({ status: filters.status === value ? "all" : value })
+      );
       return btn;
     }));
   }
 
-  function renderRows(active) {
+  function renderRows() {
     const visible = requests
-      .filter((r) => active === "all" || slug(r.status) === active)
+      .filter((r) => matches(r, filters))
       .sort((a, b) => b.votes - a.votes);
 
     rows.replaceChildren(...visible.map((r) => {
       const tr = document.createElement("tr");
-      [r.id, r.title, r.requester, r.votes].forEach((value, i) => {
+      const cell = (content, className) => {
         const td = document.createElement("td");
-        td.textContent = value;
-        if (i === 3) td.className = "num";
+        if (className) td.className = className;
+        td.append(content);
         tr.appendChild(td);
-      });
-      const statusTd = document.createElement("td");
-      const pill = document.createElement("span");
-      pill.className = `pill status-${slug(r.status)}`;
-      pill.textContent = r.status;
-      statusTd.appendChild(pill);
-      tr.appendChild(statusTd);
-      const updated = document.createElement("td");
-      updated.textContent = r.updated;
-      tr.appendChild(updated);
+      };
+      const pill = (text, prefix) => {
+        const span = document.createElement("span");
+        span.className = `pill ${prefix}-${slug(text)}`;
+        span.textContent = text;
+        return span;
+      };
+      cell(r.id);
+      cell(r.title);
+      cell(r.requester);
+      cell(String(r.votes), "num");
+      cell(pill(r.priority, "priority"));
+      cell(pill(r.status, "status"));
+      cell(r.updated);
       return tr;
     }));
 
@@ -81,16 +112,23 @@
     resultCount.textContent = `Showing ${visible.length} of ${requests.length}`;
   }
 
-  const counts = countByStatus();
-
-  function applyFilter(value) {
-    select.value = value;
-    syncUrl(value);
-    renderSummary(counts, value);
-    renderRows(value);
+  function render() {
+    renderOptions(statusSelect, "status", statuses, "All statuses");
+    renderOptions(prioritySelect, "priority", priorities, "All priorities");
+    renderSummary();
+    renderRows();
   }
 
-  renderOptions(counts);
-  select.addEventListener("change", () => applyFilter(select.value));
-  applyFilter(statusFromUrl());
+  function setFilters(changes) {
+    Object.assign(filters, changes);
+    syncUrl();
+    render();
+  }
+
+  statusSelect.addEventListener("change", () => setFilters({ status: statusSelect.value }));
+  prioritySelect.addEventListener("change", () => setFilters({ priority: prioritySelect.value }));
+
+  readUrl();
+  syncUrl();
+  render();
 })();
