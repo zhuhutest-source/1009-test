@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Feature Request Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Feature Request Dashboard</h1>
+    <p class="subtitle">Q3 roadmap intake</p>
+  </header>
+
+  <main>
+    <section class="summary" id="summary" aria-label="Requests by status"></section>
+
+    <section class="controls">
+      <label for="status-filter">Status</label>
+      <select id="status-filter"></select>
+      <label for="priority-filter">Priority</label>
+      <select id="priority-filter"></select>
+      <span id="result-count" class="result-count" aria-live="polite"></span>
+    </section>
+
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Title</th>
+          <th scope="col">Requester</th>
+          <th scope="col" class="num">Votes</th>
+          <th scope="col">Priority</th>
+          <th scope="col">Status</th>
+          <th scope="col">Updated</th>
+        </tr>
+      </thead>
+      <tbody id="request-rows"></tbody>
+    </table>
+    <p id="empty-state" class="empty" hidden>No feature requests match these filters.</p>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
