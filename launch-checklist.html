@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Team Launch Checklist</title>
+  <link rel="stylesheet" href="launch-checklist.css">
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">TEAM LAUNCH</p>
+      <h1>Launch checklist</h1>
+      <p class="subtitle">A shared, low-friction checklist for getting launch-ready.</p>
+    </div>
+    <button id="reset-button" class="secondary-button" type="button">Reset checklist</button>
+  </header>
+
+  <main>
+    <section class="progress-panel" aria-labelledby="progress-title">
+      <div class="progress-heading">
+        <div>
+          <h2 id="progress-title">Launch progress</h2>
+          <p id="progress-label" aria-live="polite">0 of 16 tasks complete</p>
+        </div>
+        <strong id="progress-percent">0%</strong>
+      </div>
+      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-labelledby="progress-title">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+    </section>
+
+    <div id="checklist" class="checklist"></div>
+  </main>
+
+  <footer>Progress is saved in this browser only.</footer>
+  <script src="launch-checklist.js"></script>
+</body>
+</html>

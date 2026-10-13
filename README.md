@@ -1,28 +1,33 @@
-# Feature Request Dashboard
+# Team launch checklist and feature dashboard
 
-A static dashboard for tracking feature requests alongside the [Q3 roadmap](Q3-Roadmap.md). It uses plain HTML, CSS, and JavaScript, so there are no dependencies and no build step.
+This repository contains two small static tools for the product team:
+
+- **Team launch checklist** — a four-section checklist for planning, content, approvals, and launch day. Completion progress is saved in the browser.
+- **Feature request dashboard** — a status-filterable view of sample feature requests alongside the [Q3 roadmap](Q3-Roadmap.md).
+
+Both tools use plain HTML, CSS, and JavaScript. There are no dependencies and no build step.
 
 ## Run locally
 
-Open `index.html` in a browser. Optionally, serve the folder:
+To open the launch checklist directly, open `launch-checklist.html` in a browser. To open the feature dashboard, open `index.html`.
+
+For a local HTTP server, run:
 
 ```sh
 python -m http.server 8000
-# then visit http://localhost:8000
+# then visit http://localhost:8000/launch-checklist.html
 ```
 
-## Features
-
-- Summary cards with the number of requests in each status. Click a card to filter by that status, and click it again to clear the filter.
-- A **Status** dropdown filter with per-status counts.
-- The selected filter is saved in the URL (for example, `?status=in-progress`), so filtered views can be bookmarked and shared.
-- Requests are sorted by votes.
+The checklist works offline and stores its checked items in `localStorage` for the current browser. Use **Reset checklist** to clear the saved progress.
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| `index.html` | Page markup |
-| `styles.css` | Styling and status colors |
-| `data.js` | Status list and sample feature requests (edit this to change the data) |
-| `app.js` | Rendering and filter logic |
+| `launch-checklist.html` | Checklist page markup |
+| `launch-checklist.css` | Checklist layout and styling |
+| `launch-checklist.js` | Checklist sections, progress, and browser persistence |
+| `index.html` | Feature dashboard page |
+| `styles.css` | Dashboard styling and status colors |
+| `data.js` | Dashboard status list and sample requests |
+| `app.js` | Dashboard rendering and filter logic |

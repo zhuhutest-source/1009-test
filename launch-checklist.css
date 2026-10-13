@@ -1,0 +1,79 @@
+:root {
+  --ink: #1d2939;
+  --muted: #667085;
+  --line: #e4e7ec;
+  --surface: #ffffff;
+  --canvas: #f8fafc;
+  --accent: #635bff;
+  --accent-soft: #eeedff;
+  --success: #159570;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--canvas);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 52px max(24px, calc((100vw - 960px) / 2)) 36px;
+  color: #fff;
+  background: linear-gradient(120deg, #302b75, #635bff);
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  opacity: 0.76;
+}
+
+h1, h2, p { margin-top: 0; }
+h1 { margin-bottom: 8px; font-size: clamp(2rem, 5vw, 3.2rem); letter-spacing: -0.04em; }
+.subtitle { margin-bottom: 0; color: #d9d7ff; }
+
+main { width: min(960px, calc(100% - 48px)); margin: -12px auto 48px; }
+
+.progress-panel, .checklist-section {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.05);
+}
+
+.progress-panel { padding: 24px; }
+.progress-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+.progress-heading h2 { margin-bottom: 6px; font-size: 1rem; }
+.progress-heading p { margin-bottom: 0; color: var(--muted); font-size: 0.9rem; }
+.progress-heading strong { color: var(--accent); font-size: 1.5rem; }
+.progress-track { height: 10px; margin-top: 18px; overflow: hidden; border-radius: 99px; background: #eaecf0; }
+.progress-bar { height: 100%; width: 0; border-radius: inherit; background: var(--accent); transition: width 180ms ease; }
+
+.checklist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+.checklist-section { padding: 22px; }
+.section-heading { display: flex; gap: 14px; align-items: flex-start; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.section-number { display: grid; place-items: center; width: 34px; height: 34px; flex: 0 0 auto; border-radius: 10px; color: var(--accent); background: var(--accent-soft); font-size: 0.8rem; font-weight: 700; }
+.section-heading h2 { margin: 2px 0 4px; font-size: 1.15rem; }
+.section-heading p { margin-bottom: 0; color: var(--muted); font-size: 0.86rem; line-height: 1.45; }
+.task-list { display: grid; gap: 2px; margin-top: 10px; }
+.task { display: flex; align-items: flex-start; gap: 11px; padding: 10px 4px; color: var(--ink); cursor: pointer; line-height: 1.4; }
+.task input { width: 18px; height: 18px; flex: 0 0 auto; margin: 1px 0 0; accent-color: var(--success); cursor: pointer; }
+.task.complete { color: var(--muted); text-decoration: line-through; }
+.secondary-button { padding: 9px 14px; border: 1px solid rgba(255, 255, 255, 0.45); border-radius: 8px; color: #fff; background: rgba(255, 255, 255, 0.12); font: inherit; cursor: pointer; }
+.secondary-button:hover { background: rgba(255, 255, 255, 0.2); }
+footer { padding: 0 24px 30px; color: var(--muted); text-align: center; font-size: 0.8rem; }
+
+@media (max-width: 700px) {
+  .hero { padding: 36px 24px 28px; }
+  .hero, .progress-heading { align-items: stretch; flex-direction: column; }
+  .secondary-button { align-self: flex-start; }
+  .checklist { grid-template-columns: 1fr; }
+}
